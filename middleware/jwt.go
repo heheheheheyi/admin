@@ -26,7 +26,7 @@ func SetToken(username string) (string, int) {
 		username,
 		jwt.StandardClaims{
 			ExpiresAt: ExpireTimee.Unix(),
-			Issuer:    "tinyblog",
+			Issuer:    "admin",
 		},
 	}
 	ReqClais := jwt.NewWithClaims(jwt.SigningMethodHS256, SetClaims)
