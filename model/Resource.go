@@ -105,43 +105,36 @@ func GetCateRes(cid int, resname string, pageSize int, pageNum int) ([]Res, int,
 	var total int
 	if resname == "" {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf("SELECT * FROM res where cid =%d", cid)
+			sqlstr = "SELECT * FROM res where cid = ?"
+			rows, err = db.Query(sqlstr, cid)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where cid=%d order by id limit %d,%d",
-				cid,
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
-		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
+			sqlstr = "SELECT * FROM res where cid=? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, cid, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
 		sqlstr = "SELECT count(id) FROM res where cid=?"
 		_ = db.QueryRow(sqlstr, cid).Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and cid=%d",
-				"'%"+resname+"%'",
-				cid,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and cid=?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", cid)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and cid=%d order by id limit %d,%d",
-				"'%"+resname+"%'",
-				cid,
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and cid=? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", cid, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where resname like %s and cid=%d", "'%"+resname+"%'", cid)
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where resname like ? and cid=?"
+		_ = db.QueryRow(sqlstr, "%"+resname+"%", cid).Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -176,39 +169,36 @@ func GetRes(resname string, pageSize int, pageNum int) ([]Res, int, int) {
 	if resname == "" {
 		if pageSize == 0 {
 			sqlstr = "SELECT * FROM res"
+			rows, err = db.Query(sqlstr)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res order by id limit %d,%d",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
-		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
+			sqlstr = "SELECT * FROM res order by id limit ?,?"
+			rows, err = db.Query(sqlstr, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
+
 		}
 		sqlstr = "SELECT count(id) FROM res"
 		_ = db.QueryRow(sqlstr).Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s",
-				"'%"+resname+"%'",
-			)
+			sqlstr = "SELECT * FROM res where resname like ?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s order by id limit %d,%d",
-				"'%"+resname+"%'",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where resname like %s", "'%"+resname+"%'")
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where resname like ?"
+		_ = db.QueryRow(sqlstr, "%"+resname+"%").Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -243,39 +233,36 @@ func GetUnBorrow(resname string, pageSize int, pageNum int) ([]Res, int, int) {
 	if resname == "" {
 		if pageSize == 0 {
 			sqlstr = "SELECT * FROM res where status=1"
+			rows, err = db.Query(sqlstr)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where status=1 order by id limit %d,%d",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
-		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
+			sqlstr = "SELECT * FROM res where status=1 order by id limit ?,?"
+			rows, err = db.Query(sqlstr, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
 		sqlstr = "SELECT count(id) FROM res where status=1"
 		_ = db.QueryRow(sqlstr).Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=1",
-				"'%"+resname+"%'",
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=1"
+			rows, err = db.Query(sqlstr, "%"+resname+"%")
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
+
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=1 order by id limit %d,%d",
-				"'%"+resname+"%'",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=1 order by id limit ?,?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where resname like %s and status=1", "'%"+resname+"%'")
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where resname like ? and status=1"
+		_ = db.QueryRow(sqlstr, "%"+resname+"%").Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -310,39 +297,39 @@ func GetApplyBorrow(resname string, pageSize int, pageNum int) ([]Res, int, int)
 	if resname == "" {
 		if pageSize == 0 {
 			sqlstr = "SELECT * FROM res where status=2 and uid!=0"
+			rows, err = db.Query(sqlstr)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where status=2 and uid!=0 order by id limit %d,%d",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
-		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
+			sqlstr = "SELECT * FROM res where status=2 and uid!=0 order by id limit ?,?"
+			rows, err = db.Query(sqlstr, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
 		sqlstr = "SELECT count(id) FROM res where status=2 and uid!=0"
 		_ = db.QueryRow(sqlstr).Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=2 and uid!=0",
-				"'%"+resname+"%'",
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=2 and uid!=0"
+			rows, err = db.Query(sqlstr, "%"+resname+"%")
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=2 and uid!=0 order by id limit %d,%d",
-				"'%"+resname+"%'",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=2 and uid!=0 order by id limit ?,?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
 		rows, err = db.Query(sqlstr)
 		if err != nil {
 			return ress, 0, errmsg.ErrorSql
 		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where resname like %s and status=2 and uid!=0", "'%"+resname+"%'")
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where resname like ? and status=2 and uid!=0"
+		_ = db.QueryRow(sqlstr, "%"+resname+"%").Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -377,39 +364,39 @@ func GetBorrowRes(resname string, pageSize int, pageNum int) ([]Res, int, int) {
 	if resname == "" {
 		if pageSize == 0 {
 			sqlstr = "SELECT * FROM res where status=3 and uid!=0"
+			rows, err = db.Query(sqlstr)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where status=3 and uid!=0 order by id limit %d,%d",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
-		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
+			sqlstr = "SELECT * FROM res where status=3 and uid!=0 order by id limit ?,?"
+			rows, err = db.Query(sqlstr, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
 		sqlstr = "SELECT count(id) FROM res where status=3 and uid!=0"
 		_ = db.QueryRow(sqlstr).Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=3 and uid!=0",
-				"'%"+resname+"%'",
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=3 and uid!=0"
+			rows, err = db.Query(sqlstr, "%"+resname+"%")
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=3 and uid!=0 order by id limit %d,%d",
-				"'%"+resname+"%'",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=3 and uid!=0 order by id limit ?,?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
 		rows, err = db.Query(sqlstr)
 		if err != nil {
 			return ress, 0, errmsg.ErrorSql
 		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where resname like %s and status=3 and uid!=0", "'%"+resname+"%'")
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where resname like ? and status=3 and uid!=0"
+		_ = db.QueryRow(sqlstr, "%"+resname+"%").Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -443,43 +430,36 @@ func GetCateUnBorrow(cid int, resname string, pageSize int, pageNum int) ([]Res,
 	var total int
 	if resname == "" {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf("SELECT * FROM res where status=1 and cid=%d", cid)
+			sqlstr = "SELECT * FROM res where status=1 and cid=?"
+			rows, err = db.Query(sqlstr, cid)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where status=1 and cid=%d order by id limit %d,%d",
-				cid,
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where status=1 and cid=? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, cid, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where status=1 and cid=%d", cid)
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where status=1 and cid=?"
+		_ = db.QueryRow(sqlstr, cid).Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=1 and cid=%d",
-				"'%"+resname+"%'",
-				cid,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=1 and cid=?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", cid)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=1 and cid=%d order by id limit %d,%d",
-				"'%"+resname+"%'",
-				cid,
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=1 and cid=? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", cid, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where resname like %s and status=1 and cid=%d", "'%"+resname+"%'", cid)
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where resname like ? and status=1 and cid=?"
+		_ = db.QueryRow(sqlstr, "%"+resname+"%", cid).Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -513,43 +493,36 @@ func GetCateApplyBorrow(cid int, resname string, pageSize int, pageNum int) ([]R
 	var total int
 	if resname == "" {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf("SELECT * FROM res where status=2 and uid!=0 and cid=%d", cid)
+			sqlstr = "SELECT * FROM res where status=2 and uid!=0 and cid=?"
+			rows, err = db.Query(sqlstr, cid)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where status=2 and uid!=0 and cid=%d order by id limit %d,%d",
-				cid,
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where status=2 and uid!=0 and cid=? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, cid, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where status=2 and uid!=0 and cid=%d", cid)
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where status=2 and uid!=0 and cid=?"
+		_ = db.QueryRow(sqlstr, cid).Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=2 and uid!=0 and cid=%d",
-				"'%"+resname+"%'",
-				cid,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=2 and uid!=0 and cid=?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", cid)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=2 and uid!=0 and cid=%d order by id limit %d,%d",
-				"'%"+resname+"%'",
-				cid,
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=2 and uid!=0 and cid=? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", cid, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where resname like %s and status=2 and uid!=0 and cid=%d", "'%"+resname+"%'", cid)
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where resname like ? and status=2 and uid!=0 and cid=?"
+		_ = db.QueryRow(sqlstr, "%"+resname+"%", cid).Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -583,43 +556,36 @@ func GetCateBorrowRes(cid int, resname string, pageSize int, pageNum int) ([]Res
 	var total int
 	if resname == "" {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf("SELECT * FROM res where status=3 and uid!=0 and cid=%d", cid)
+			sqlstr = "SELECT * FROM res where status=3 and uid!=0 and cid=?"
+			rows, err = db.Query(sqlstr, cid)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where status=3 and uid!=0 and cid=%d order by id limit %d,%d",
-				cid,
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where status=3 and uid!=0 and cid=? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, cid, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where status=3 and uid!=0 and cid=%d", cid)
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where status=3 and uid!=0 and cid=?"
+		_ = db.QueryRow(sqlstr, cid).Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=3 and uid!=0 and cid=%d",
-				"'%"+resname+"%'",
-				cid,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=3 and uid!=0 and cid=?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", cid)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM res where resname like %s and status=3 and uid!=0 and cid=%d order by id limit %d,%d",
-				"'%"+resname+"%'",
-				cid,
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT * FROM res where resname like ? and status=3 and uid!=0 and cid=? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, "%"+resname+"%", cid, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return ress, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return ress, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM res where resname like %s and status=3 and uid!=0 and cid=%d", "'%"+resname+"%'", cid)
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM res where resname like ? and status=3 and uid!=0 and cid=?"
+		_ = db.QueryRow(sqlstr, "%"+resname+"%", cid).Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {

@@ -24,7 +24,6 @@ func CheckUser(name string) int {
 	row := db.QueryRow(sqlstr, name)
 	var sqlid int
 	_ = row.Scan(&sqlid)
-	println(sqlid)
 	if sqlid > 0 {
 		return errmsg.ErrorUsernameUsed
 	}
@@ -97,39 +96,35 @@ func GetUser(username string, pageSize int, pageNum int) ([]User, int, int) {
 	if username == "" {
 		if pageSize == 0 {
 			sqlstr = "SELECT id, username,num, password, role FROM users"
+			rows, err = db.Query(sqlstr)
+			if err != nil {
+				return users, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT id, username,num, password, role FROM users order by id limit %d,%d",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
-		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return users, 0, errmsg.ErrorSql
+			sqlstr = "SELECT id, username,num, password, role FROM users order by id limit ?,?"
+			rows, err = db.Query(sqlstr, (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return users, 0, errmsg.ErrorSql
+			}
 		}
 		sqlstr = "SELECT count(id) FROM users"
 		_ = db.QueryRow(sqlstr).Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT id, username,num, password, role FROM users where username like %s",
-				"'%"+username+"%'",
-			)
+			sqlstr = "SELECT id, username,num, password, role FROM users where username like ?"
+			rows, err = db.Query(sqlstr, "%"+username+"%", (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return users, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT id,username,password,role FROM users where username like %s order by id limit %d,%d",
-				"'%"+username+"%'",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			sqlstr = "SELECT id,username,password,role FROM users where username like ? order by id limit ?,?"
+			rows, err = db.Query(sqlstr, "%"+username+"%", (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				return users, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return users, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM users where username like %s", "'%"+username+"%'")
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		sqlstr = "SELECT count(id) FROM users where username like ?"
+		_ = db.QueryRow(sqlstr, "%"+username+"%").Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {

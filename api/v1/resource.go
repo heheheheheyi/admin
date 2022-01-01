@@ -94,7 +94,6 @@ func EditRes(c *gin.Context) {
 func DeleteRes(c *gin.Context) {
 	id, _ := strconv.Atoi(c.Param("id"))
 	code = model.DeleteRes(id)
-	println(code)
 	c.JSON(http.StatusOK, gin.H{
 		"status":  code,
 		"message": errmsg.GetErrMsg(code),

@@ -3,7 +3,6 @@ package model
 import (
 	"admin/utils/errmsg"
 	"database/sql"
-	"fmt"
 )
 
 //资源数组
@@ -27,19 +26,19 @@ func GetBorrowRecord(pageSize int, pageNum int) ([]Record, int, int) {
 	var rows *sql.Rows
 	var total int
 	if pageSize == 0 {
-		sqlstr = fmt.Sprintf("SELECT * FROM borrow_record order by id desc")
+		sqlstr = "SELECT * FROM borrow_record order by id desc"
+		rows, err = db.Query(sqlstr)
+		if err != nil {
+			return records, 0, errmsg.ErrorSql
+		}
 	} else {
-		sqlstr = fmt.Sprintf(
-			"SELECT * FROM borrow_record order by id limit %d,%d desc",
-			(pageNum-1)*pageSize,
-			pageSize,
-		)
+		sqlstr = "SELECT * FROM borrow_record order by id desc limit ?,?"
+		rows, err = db.Query(sqlstr, (pageNum-1)*pageSize, pageSize)
+		if err != nil {
+			return records, 0, errmsg.ErrorSql
+		}
 	}
-	rows, err = db.Query(sqlstr)
-	if err != nil {
-		return records, 0, errmsg.ErrorSql
-	}
-	sqlstr = fmt.Sprintf("SELECT count(id) FROM borrow_record")
+	sqlstr = "SELECT count(id) FROM borrow_record"
 	_ = db.QueryRow(sqlstr).Scan(&total)
 	defer rows.Close()
 	for rows.Next() {
@@ -78,19 +77,19 @@ func GetReturnRecord(pageSize int, pageNum int) ([]Record, int, int) {
 	var rows *sql.Rows
 	var total int
 	if pageSize == 0 {
-		sqlstr = fmt.Sprintf("SELECT * FROM return_record order by id desc")
+		sqlstr = "SELECT * FROM return_record order by id desc"
+		rows, err = db.Query(sqlstr)
+		if err != nil {
+			return records, 0, errmsg.ErrorSql
+		}
 	} else {
-		sqlstr = fmt.Sprintf(
-			"SELECT * FROM return_record order by id limit %d,%d desc",
-			(pageNum-1)*pageSize,
-			pageSize,
-		)
+		sqlstr = "SELECT * FROM return_record order by id desc limit ?,?"
+		rows, err = db.Query(sqlstr, (pageNum-1)*pageSize, pageSize)
+		if err != nil {
+			return records, 0, errmsg.ErrorSql
+		}
 	}
-	rows, err = db.Query(sqlstr)
-	if err != nil {
-		return records, 0, errmsg.ErrorSql
-	}
-	sqlstr = fmt.Sprintf("SELECT count(id) FROM return_record")
+	sqlstr = "SELECT count(id) FROM return_record"
 	_ = db.QueryRow(sqlstr).Scan(&total)
 	defer rows.Close()
 	for rows.Next() {

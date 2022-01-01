@@ -16,8 +16,7 @@ type Cate struct {
 //查询资源名是否存在
 func CheckCate(name string) int {
 	var sqlname string
-	sqlstr := "select catename from cate where catename=? "
-	_ = db.QueryRow(sqlstr, name).Scan(&sqlname)
+	_ = db.QueryRow("select catename from cate where catename=? ", name).Scan(&sqlname)
 	if sqlname != "" {
 		return errmsg.ErrorCatenameUsed
 	}
@@ -27,8 +26,7 @@ func CheckCate(name string) int {
 //编辑时查询资源名是否存在（是否是自己或者修改的用户名已存在）
 func EditCheckCate(id int, name string) int {
 	var sqlid int
-	sqlstr := "select id from cate where catename=? "
-	_ = db.QueryRow(sqlstr, name).Scan(&sqlid)
+	_ = db.QueryRow("select id from cate where catename=? ", name).Scan(&sqlid)
 	if sqlid > 0 && sqlid != id {
 		return errmsg.ErrorCatenameUsed
 	}
@@ -49,8 +47,7 @@ func CreateCate(data *Cate) int {
 		_ = tx.Rollback()
 		return errmsg.ErrorCatenameUsed
 	}
-	sqlstr := "insert into cate(catename,num) values(?,0)"
-	_, err = db.Exec(sqlstr, data.Catename)
+	_, err = db.Exec("insert into cate(catename,num) values(?,0)", data.Catename)
 	if err != nil {
 		_ = tx.Rollback()
 		return errmsg.ErrorSql
@@ -61,10 +58,8 @@ func CreateCate(data *Cate) int {
 
 //查询单个资源
 func GetOneCate(id int) (Cate, int) {
-	var sqlstr string
 	var cate Cate
-	sqlstr = "SELECT * FROM cate where id=?"
-	_ = db.QueryRow(sqlstr, id).Scan(
+	_ = db.QueryRow("SELECT * FROM cate where id=?", id).Scan(
 		&cate.Id,
 		&cate.Catename,
 		&cate.Num,
@@ -74,46 +69,39 @@ func GetOneCate(id int) (Cate, int) {
 
 //查询分类列表
 func GetCate(catename string, pageSize int, pageNum int) ([]Cate, int, int) {
-	var sqlstr string
 	var cates []Cate
 	var rows *sql.Rows
 	var total int
 	if catename == "" {
 		if pageSize == 0 {
-			sqlstr = "SELECT * FROM cate"
+			rows, err = db.Query("SELECT * FROM cate")
+			if err != nil {
+				fmt.Println(err)
+				return cates, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM cate order by id limit %d,%d",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			rows, err = db.Query("SELECT * FROM cate order by id limit ?,?", (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				fmt.Println(err)
+				return cates, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return cates, 0, errmsg.ErrorSql
-		}
-		sqlstr = "SELECT count(id) FROM cate"
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		_ = db.QueryRow("SELECT count(id) FROM cate").Scan(&total)
 	} else {
 		if pageSize == 0 {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM cate where catename like %s",
-				"'%"+catename+"%'",
-			)
+			rows, err = db.Query("SELECT * FROM cate where catename like ?", "%"+catename+"%")
+			if err != nil {
+				fmt.Println(err)
+				return cates, 0, errmsg.ErrorSql
+			}
 		} else {
-			sqlstr = fmt.Sprintf(
-				"SELECT * FROM cate where catename like %s order by id limit %d,%d",
-				"'%"+catename+"%'",
-				(pageNum-1)*pageSize,
-				pageSize,
-			)
+			rows, err = db.Query("SELECT * FROM cate where catename like ? order by id limit ?,?", "%"+catename+"%", (pageNum-1)*pageSize, pageSize)
+			if err != nil {
+				fmt.Println(err)
+				return cates, 0, errmsg.ErrorSql
+			}
 		}
-		rows, err = db.Query(sqlstr)
-		if err != nil {
-			return cates, 0, errmsg.ErrorSql
-		}
-		sqlstr = fmt.Sprintf("SELECT count(id) FROM cate where catename like %s", "'%"+catename+"%'")
-		_ = db.QueryRow(sqlstr).Scan(&total)
+		_ = db.QueryRow("SELECT count(id) FROM cate where catename like ?", "%"+catename+"%").Scan(&total)
 	}
 	defer rows.Close()
 	for rows.Next() {
@@ -147,8 +135,7 @@ func EditCate(id int, data *Cate) int {
 		_ = tx.Rollback()
 		return errmsg.ERROR
 	}
-	sqlstr := "update cate set catename=? where id=?"
-	_, err = db.Exec(sqlstr, data.Catename, id)
+	_, err = db.Exec("update cate set catename=? where id=?", data.Catename, id)
 	if err != nil {
 		_ = tx.Rollback()
 		return errmsg.ErrorSql
@@ -172,8 +159,7 @@ func DeleteCate(id int) int {
 		_ = tx.Rollback()
 		return errmsg.ErrorCateHasRes
 	}
-	sqlstr := "delete from cate where id=?"
-	_, err = db.Exec(sqlstr, id)
+	_, err = db.Exec("delete from cate where id=?", id)
 	if err != nil {
 		_ = tx.Rollback()
 		return errmsg.ErrorSql

@@ -228,7 +228,6 @@ export default {
         async onOk () {
           const { data: res } = await that.$http.delete(`res/${id}`)
           if (res.status !== 200) return that.$message.error(res.message)
-          console.log(res.status)
           that.$message.success('删除成功')
           that.getResList()
         },

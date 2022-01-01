@@ -44,7 +44,7 @@ func LoadData(file *ini.File) {
 	DbHost = file.Section("database").Key("DbHost").MustString("localhost")
 	DbPort = file.Section("database").Key("DbPort").MustString("3306")
 	DbUser = file.Section("database").Key("DbUser").MustString("root")
-	DbPassWord = file.Section("database").Key("DbPassWord").MustString("root1234")
+	DbPassWord = file.Section("database").Key("DbPassWord").MustString("")
 	DbName = file.Section("database").Key("DbName").MustString("admin")
 }
 func LoadYun(file *ini.File) {
