@@ -33,8 +33,11 @@ func InitRouter() {
 
 	//设置路由
 
+	//登录接口
 	r.POST("api/v1/login", v1.Login)
+	//注册接口
 	r.POST("api/v1/user/add", v1.AddUser)
+
 	//需要token
 	router := r.Group("api/v1")
 	router.Use(middleware.JwtToken())
