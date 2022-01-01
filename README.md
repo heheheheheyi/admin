@@ -10,22 +10,6 @@ Vue+Gin+Mysql
 ##如何运行
 
 ###建表 
-Mysql数据库执行
-
-`create table borrow_record
-(
-id int auto_increment
-primary key,
-rid int not null,
-cid int not null,
-uid int not null,
-mid int not null,
-time datetime not null,
-constraint borrow_record_id_uindex
-unique (id)
-);`
-
-或
 
 导入database的admin.sql文件
 
