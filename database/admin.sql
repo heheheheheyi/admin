@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主机： localhost
--- 生成日期： 2021-12-24 07:11:59
+-- 生成日期： 2022-01-01 06:47:48
 -- 服务器版本： 8.0.17
 -- PHP 版本： 7.3.10
 
@@ -65,7 +65,7 @@ CREATE TABLE `cate` (
 
 INSERT INTO `cate` (`id`, `catename`, `num`) VALUES
 (1, '桌子', 3),
-(2, '电脑', 3),
+(2, '电脑', 2),
 (3, '椅子', 3),
 (4, '教室', 3);
 
@@ -95,7 +95,9 @@ INSERT INTO `chat` (`id`, `uid`, `fid`, `content`, `time`, `isread`) VALUES
 (4, 2, 1, '你借用的桌子2归还成功。', '2021-12-20 13:31:06', 2),
 (5, 1, 1, '你申请的教室1通过申请。', '2021-12-20 21:05:50', 2),
 (6, 1, 2, '你借用的电脑1归还成功。', '2021-12-20 21:06:15', 1),
-(7, 1, 1, '你借用的椅子1未按期归还。', '2021-12-20 21:06:59', 2);
+(7, 1, 1, '你借用的椅子1未按期归还。', '2021-12-20 21:06:59', 2),
+(8, 1, 1, '你借用的椅子1未按期归还。', '2022-01-01 13:59:42', 2),
+(9, 1, 1, '你借用的椅子1未按期归还。', '2022-01-01 14:47:07', 1);
 
 -- --------------------------------------------------------
 
@@ -120,7 +122,7 @@ CREATE TABLE `res` (
 
 INSERT INTO `res` (`id`, `resname`, `cid`, `img`, `status`, `uid`, `borrow_time`, `return_time`) VALUES
 (1, '桌子1', 1, 'http://r3kwcz679.hn-bkt.clouddn.com/FqH16RdEphFWcZAzV5YOZwca-2JR', 1, NULL, NULL, NULL),
-(2, '电脑1', 2, 'http://r3kwcz679.hn-bkt.clouddn.com/FnRPmW_Hei6YlKm6agTSplFMgb5_', 1, NULL, NULL, NULL),
+(2, '电脑1', 2, 'http://r3kwcz679.hn-bkt.clouddn.com/FnRPmW_Hei6YlKm6agTSplFMgb5_', 2, 1, '2022-01-02 00:00:00', '2022-01-02 00:00:00'),
 (3, '椅子1', 3, 'http://r3kwcz679.hn-bkt.clouddn.com/FqqdGn2lDe61jOubhcsnpp7HOqqm', 3, 1, '2021-12-21 00:00:00', '2021-12-19 00:00:00'),
 (4, '教室1', 4, 'http://r3kwcz679.hn-bkt.clouddn.com/Fh8x9D-bTkkopVKOJqOKVHt1O3xr', 3, 1, '2021-12-21 00:00:00', '2021-12-24 00:00:00'),
 (5, '桌子2', 1, 'http://r3kwcz679.hn-bkt.clouddn.com/FqH16RdEphFWcZAzV5YOZwca-2JR', 1, NULL, NULL, NULL),
@@ -129,8 +131,7 @@ INSERT INTO `res` (`id`, `resname`, `cid`, `img`, `status`, `uid`, `borrow_time`
 (8, '椅子3', 3, 'http://r3kwcz679.hn-bkt.clouddn.com/FqqdGn2lDe61jOubhcsnpp7HOqqm', 1, NULL, NULL, NULL),
 (9, '教室2', 4, 'http://r3kwcz679.hn-bkt.clouddn.com/Fh8x9D-bTkkopVKOJqOKVHt1O3xr', 1, NULL, NULL, NULL),
 (10, '电脑2', 2, 'http://r3kwcz679.hn-bkt.clouddn.com/FnRPmW_Hei6YlKm6agTSplFMgb5_', 1, NULL, NULL, NULL),
-(11, '教室3', 4, 'http://r3kwcz679.hn-bkt.clouddn.com/Fh8x9D-bTkkopVKOJqOKVHt1O3xr', 1, NULL, NULL, NULL),
-(12, '电脑3', 2, 'http://r3kwcz679.hn-bkt.clouddn.com/FnRPmW_Hei6YlKm6agTSplFMgb5_', 1, NULL, NULL, NULL);
+(11, '教室3', 4, 'http://r3kwcz679.hn-bkt.clouddn.com/Fh8x9D-bTkkopVKOJqOKVHt1O3xr', 1, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -247,7 +248,7 @@ ALTER TABLE `cate`
 -- 使用表AUTO_INCREMENT `chat`
 --
 ALTER TABLE `chat`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- 使用表AUTO_INCREMENT `res`
