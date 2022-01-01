@@ -49,16 +49,16 @@ DbPassWord ：数据库密码
 
 资源的操作记录（添加时间、借出时间、归还时间等）和消息记录。
 ### 登录界面
-![](static/readmepng/1.png)
+![](http://r50pyj4pr.hn-bkt.clouddn.com/1.png)
 ### 资源管理界面
-![](static/readmepng/2.png)
+![](http://r50pyj4pr.hn-bkt.clouddn.com/2.png)
 ### 资源详情界面
-![](static/readmepng/3.png)
+![](http://r50pyj4pr.hn-bkt.clouddn.com/3.png)
 ### 提醒超期未归还功能界面
-![](static/readmepng/5.png)
+![](http://r50pyj4pr.hn-bkt.clouddn.com/5.png)
 ### 提示消息界面
-![](static/readmepng/4.png)
+![](http://r50pyj4pr.hn-bkt.clouddn.com/4.png)
 ### 申请资源界面
-![](static/readmepng/6.png)
+![](http://r50pyj4pr.hn-bkt.clouddn.com/6.png)
 ### 用户管理界面
-![](static/readmepng/7.png)
+![](http://r50pyj4pr.hn-bkt.clouddn.com/7.png)
