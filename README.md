@@ -15,7 +15,7 @@ Vue+Gin+Mysql
 
 ### 配置文件
 
-修改config.ini文件
+修改config文件夹下的config.ini文件
 
 DbUser ：数据库用户名
 
